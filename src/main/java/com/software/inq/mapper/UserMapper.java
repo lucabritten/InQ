@@ -1,0 +1,24 @@
+package com.software.inq.mapper;
+
+import com.software.inq.dto.UserDTO;
+import com.software.inq.model.Ticket;
+import com.software.inq.model.User;
+
+import java.util.stream.Collectors;
+
+public class UserMapper {
+
+    public static UserDTO toDTO(User user){
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .age(user.getAge())
+                .emailAddress(user.getEmailAddress())
+                .ticket_ids(user.getTickets().stream()
+                        .map(Ticket::getId)
+                        .collect(Collectors.toSet()))
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+    }
+}
