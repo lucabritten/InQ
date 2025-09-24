@@ -1,0 +1,83 @@
+package com.software.inq.controller;
+
+import com.software.inq.dto.EventDTO;
+import com.software.inq.service.EventService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(EventController.class)
+class EventControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private EventService eventService;
+
+    @Test
+    void shouldReturnAllEvents() throws Exception {
+        EventDTO event = EventDTO.builder()
+                .id(1L)
+                .name("Hackathon 2025")
+                .location("Berlin")
+                .date(LocalDateTime.now())
+                .build();
+
+        when(eventService.getAll()).thenReturn(List.of(event));
+
+        mockMvc.perform(get("/api/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Hackathon 2025"))
+                .andExpect(jsonPath("$[0].location").value("Berlin"));
+    }
+
+    @Test
+    void shouldReturnEventWhenIdExists() throws Exception {
+        // Arrange
+        EventDTO event = EventDTO.builder()
+                .id(1L)
+                .name("Hackathon 2025")
+                .location("Berlin")
+                .date(LocalDateTime.now())
+                .build();
+
+        when(eventService.getOne(1L)).thenReturn(event);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/events/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Hackathon 2025"))
+                .andExpect(jsonPath("$.location").value("Berlin"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+        // Arrange
+        when(eventService.getOne(99L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/events/99")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+}
