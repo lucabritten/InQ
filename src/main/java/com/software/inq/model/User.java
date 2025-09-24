@@ -25,11 +25,11 @@ public class User {
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "email_address", unique = true)
+    private String emailAddress;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Ticket> tickets;
-
-    @Column(name = "email_address", unique = true)
-    private String emailAdress;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
