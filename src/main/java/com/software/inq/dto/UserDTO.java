@@ -10,7 +10,7 @@ public record UserDTO(Long id,
                       String name,
                       Integer age,
                       String emailAddress,
-                      Set<Long> ticket_ids,
+                      Set<Long> ticketIds,
                       LocalDateTime createdAt,
                       LocalDateTime updatedAt)
 {

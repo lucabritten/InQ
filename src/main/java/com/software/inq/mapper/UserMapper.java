@@ -18,7 +18,7 @@ public class UserMapper {
                 .name(user.getName())
                 .age(user.getAge())
                 .emailAddress(user.getEmailAddress())
-                .ticket_ids(user.getTickets().stream()
+                .ticketIds(user.getTickets().stream()
                         .map(Ticket::getId)
                         .collect(Collectors.toSet()))
                 .createdAt(user.getCreatedAt())
