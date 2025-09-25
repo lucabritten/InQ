@@ -1,6 +1,5 @@
 package com.software.inq.dto;
 
-import com.software.inq.model.Ticket;
 import com.software.inq.model.TicketStatus;
 import lombok.Builder;
 

@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 
 public class UserMapper {
 
+    private UserMapper(){
+
+    }
+
     public static UserDTO toDTO(User user){
         return UserDTO.builder()
                 .id(user.getId())
@@ -20,5 +24,16 @@ public class UserMapper {
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
+    }
+
+    /**
+     * field tickets needs to be set in service class
+     */
+    public static User getEntity(UserDTO dto){
+        User user = new User();
+        user.setId(dto.id());
+        user.setAge(dto.age());
+        user.setEmailAddress(dto.emailAddress());
+        return user;
     }
 }
