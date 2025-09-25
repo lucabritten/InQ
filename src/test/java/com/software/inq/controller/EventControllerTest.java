@@ -3,6 +3,7 @@ package com.software.inq.controller;
 import com.software.inq.dto.EventDTO;
 import com.software.inq.service.EventService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,11 +12,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,4 +82,63 @@ class EventControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void shouldCreateNewEvent() throws Exception {
+        String eventJson = """
+                {
+                    "name": "Rowing_World_Cup",
+                    "location": "Lucerne",
+                    "date": "2025-10-01T10:00:00"
+                }
+                """;
+        EventDTO savedEvent = EventDTO.builder()
+                .id(1L)
+                .name("Rowing_World_Cup")
+                .location("Lucerne")
+                .date(LocalDateTime.of(2025, 10, 1, 10, 0))
+                .build();
+
+        when(eventService.create(any(EventDTO.class)))
+                .thenReturn(savedEvent);
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(eventJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Rowing_World_Cup"))
+                .andExpect(jsonPath("$.location").value("Lucerne"));
+    }
+
+    @Test
+    void shouldUpdateExistingEvent() throws Exception{
+        String updateJson = """
+                {
+                    "name": "Rowing_World_Cup",
+                    "location": "Varese",
+                    "date": "2025-10-01T10:00:00"
+                }
+                """;
+        EventDTO updatedEvent = EventDTO.builder()
+                .id(1L)
+                .name("Rowing_World_Cup")
+                .location("Varese")
+                .date(LocalDateTime.of(2025, 12, 1, 12, 0))
+                .build();
+
+        when(eventService.update(any(Long.class), any(EventDTO.class)))
+                .thenReturn(updatedEvent);
+
+        mockMvc.perform(put("/api/events/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(updateJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Rowing_World_Cup"))
+                .andExpect(jsonPath("$.location").value("Varese"));
+    }
+    @Test
+    void shouldThrow404whenTryToUpdateNonExistentEvent(){
+
+    }
 }

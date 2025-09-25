@@ -5,11 +5,29 @@ import com.software.inq.model.Event;
 
 public class EventMapper {
 
+    private EventMapper(){
+
+    }
+
     public static EventDTO toDTO(Event event){
         return EventDTO.builder()
                 .id(event.getId())
+                .name(event.getName())
                 .location(event.getLocation())
                 .date(event.getDate())
                 .build();
+    }
+
+    /**
+     * Tickets needs to be set in service class
+     */
+    public static Event toEntity(EventDTO dto){
+        Event event = new Event();
+        event.setId(dto.id());
+        event.setName(dto.name());
+        event.setLocation(dto.location());
+        event.setDate(dto.date());
+        return event;
+
     }
 }
