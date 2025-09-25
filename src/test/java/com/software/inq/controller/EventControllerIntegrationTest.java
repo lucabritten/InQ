@@ -24,14 +24,14 @@ class EventControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper; // wandelt DTOs in JSON um
+    private ObjectMapper objectMapper;
 
     @Autowired
     private EventRepository eventRepository;
 
     @BeforeEach
     void cleanDb() {
-        eventRepository.deleteAll(); // leere DB vor jedem Test
+        eventRepository.deleteAll();
     }
 
     @Test
@@ -45,7 +45,6 @@ class EventControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(eventDTO);
 
-        // Act: POST → Event erstellen
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -54,10 +53,36 @@ class EventControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value("Hackathon 2025"))
                 .andExpect(jsonPath("$.location").value("Berlin"));
 
-        // Assert: GET → Event wieder abfragen
         mockMvc.perform(get("/api/events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Hackathon 2025"))
                 .andExpect(jsonPath("$[0].location").value("Berlin"));
+    }
+
+    @Test
+    void shouldDeleteEvent() throws Exception {
+        EventDTO eventDTO = EventDTO.builder()
+                .name("To be deleted")
+                .location("TestCity")
+                .date(LocalDateTime.of(2025, 12, 1, 10, 0))
+                .build();
+
+        String json = objectMapper.writeValueAsString(eventDTO);
+
+        String response = mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        EventDTO createdEvent = objectMapper.readValue(response, EventDTO.class);
+
+        mockMvc.perform(delete("/api/events/" + createdEvent.id()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/events/" + createdEvent.id()))
+                .andExpect(status().isNotFound());
     }
 }

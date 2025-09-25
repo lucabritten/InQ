@@ -72,4 +72,8 @@ public class EventService {
         Event updatedEvent = eventRepository.save(event);
         return EventMapper.toDTO(updatedEvent);
     }
+
+    public void delete(Long id){
+        eventRepository.deleteById(id);
+    }
 }

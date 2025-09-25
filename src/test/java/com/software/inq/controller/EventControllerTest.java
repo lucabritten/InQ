@@ -3,7 +3,6 @@ package com.software.inq.controller;
 import com.software.inq.dto.EventDTO;
 import com.software.inq.service.EventService;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,11 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -138,7 +137,38 @@ class EventControllerTest {
                 .andExpect(jsonPath("$.location").value("Varese"));
     }
     @Test
-    void shouldThrow404whenTryToUpdateNonExistentEvent(){
+    void shouldThrow404whenTryToUpdateNonExistentEvent() throws Exception{
+        String updateJson = """
+            {
+                "name": "Nonexistent Event",
+                "location": "Nowhere",
+                "date": "2025-10-01T10:00:00"
+            }
+            """;
 
+        // Arrange: Service wirft NOT_FOUND-Exception
+        when(eventService.update(any(Long.class), any(EventDTO.class)))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        // Act & Assert
+        mockMvc.perform(put("/api/events/99")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldDeleteEventWhenIdExists() throws Exception {
+        mockMvc.perform(delete("/api/events/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistentEvent() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"))
+                .when(eventService).delete(99L);
+
+        mockMvc.perform(delete("/api/events/99"))
+                .andExpect(status().isNotFound());
     }
 }
