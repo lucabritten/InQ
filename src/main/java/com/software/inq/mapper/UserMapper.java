@@ -29,7 +29,7 @@ public class UserMapper {
     /**
      * field tickets needs to be set in service class
      */
-    public static User getEntity(UserDTO dto){
+    public static User toEntity(UserDTO dto){
         User user = new User();
         user.setId(dto.id());
         user.setAge(dto.age());

@@ -4,11 +4,9 @@ import com.software.inq.dto.UserDTO;
 import com.software.inq.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -28,5 +26,26 @@ public class UserController {
     public ResponseEntity<UserDTO> getOne(@PathVariable Long id){
         UserDTO user = userService.getOne(id);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO){
+        UserDTO createdUser = userService.create(userDTO);
+        return ResponseEntity
+                .created(URI.create("/api/users" + createdUser.id()))
+                .body(createdUser);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        UserDTO updatedUser = userService.update(id, userDTO);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+
     }
 }

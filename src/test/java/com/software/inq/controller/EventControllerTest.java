@@ -146,11 +146,9 @@ class EventControllerTest {
             }
             """;
 
-        // Arrange: Service wirft NOT_FOUND-Exception
         when(eventService.update(any(Long.class), any(EventDTO.class)))
                 .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
-        // Act & Assert
         mockMvc.perform(put("/api/events/99")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateJson))
