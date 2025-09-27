@@ -32,7 +32,7 @@ public class UserController {
     public ResponseEntity<UserDTO> create(@RequestBody UserDTO userDTO){
         UserDTO createdUser = userService.create(userDTO);
         return ResponseEntity
-                .created(URI.create("/api/users" + createdUser.id()))
+                .created(URI.create("/api/users/" + createdUser.id()))
                 .body(createdUser);
     }
 

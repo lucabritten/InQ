@@ -2,9 +2,16 @@ package com.software.inq.service;
 
 import com.software.inq.dto.TicketDTO;
 import com.software.inq.mapper.TicketMapper;
+import com.software.inq.model.Event;
+import com.software.inq.model.Ticket;
+import com.software.inq.model.User;
+import com.software.inq.repository.EventRepository;
 import com.software.inq.repository.TicketRepository;
+import com.software.inq.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -13,6 +20,8 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     public List<TicketDTO> getAll(){
         return ticketRepository.findAll()
@@ -22,18 +31,49 @@ public class TicketService {
     }
 
     public TicketDTO getOne(Long id){
-        return null;
+        return ticketRepository.findById(id)
+                .map(TicketMapper::toDTO)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with id " + id + " does not exist."));
     }
 
     public TicketDTO create(TicketDTO ticketDTO){
-        return null;
+        Ticket ticket = TicketMapper.toEntity(ticketDTO);
+
+        ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
+        ticket.setUser(getLinkedUser(ticketDTO.userId()));
+
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return TicketMapper.toDTO(savedTicket);
     }
 
     public TicketDTO update(Long id, TicketDTO ticketDTO){
-        return null;
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found"));
+
+        ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
+        ticket.setUser(getLinkedUser(ticketDTO.userId()));
+        ticket.setStatus(ticketDTO.status());
+        ticket.setQrCode(ticketDTO.qrCode());
+
+        Ticket updatedTicket = ticketRepository.save(ticket);
+        return TicketMapper.toDTO(updatedTicket);
     }
 
     public void delete(Long id){
         ticketRepository.deleteById(id);
+    }
+
+    private Event getLinkedEvent(Long eventId){
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,"Event with id " + eventId + " not found."));
+    }
+
+    private User getLinkedUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User with id " + userId + " not found"));
+
     }
 }

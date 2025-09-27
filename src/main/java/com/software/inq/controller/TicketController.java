@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,22 +23,28 @@ public class TicketController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TicketDTO> getOne(){
-        return null;
+    public ResponseEntity<TicketDTO> getOne(@PathVariable Long id){
+        TicketDTO ticket = ticketService.getOne(id);
+        return ResponseEntity.ok(ticket);
     }
 
     @PostMapping
-    public ResponseEntity<TicketDTO> create(){
-        return null;
+    public ResponseEntity<TicketDTO> create(@RequestBody TicketDTO ticketDTO){
+        TicketDTO savedTicket = ticketService.create(ticketDTO);
+        return ResponseEntity
+                .created(URI.create("/api/tickets/" + savedTicket.id()))
+                .body(savedTicket);
     }
 
-    @PutMapping
-    public ResponseEntity<TicketDTO> update(){
-        return null;
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketDTO> update(@PathVariable Long id, @RequestBody TicketDTO ticketDTO){
+        TicketDTO updatedTicket = ticketService.update(id, ticketDTO);
+        return ResponseEntity.ok(updatedTicket);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(){
-        return null;
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        ticketService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

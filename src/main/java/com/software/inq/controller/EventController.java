@@ -32,7 +32,7 @@ public class EventController {
     public ResponseEntity<EventDTO> create(@RequestBody EventDTO eventDTO){
         EventDTO savedEvent = eventService.create(eventDTO);
         return ResponseEntity
-                .created(URI.create("/api/events" + savedEvent.id()))
+                .created(URI.create("/api/events/" + savedEvent.id()))
                 .body(savedEvent);
     }
 
