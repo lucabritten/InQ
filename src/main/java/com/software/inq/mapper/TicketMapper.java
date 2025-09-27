@@ -9,7 +9,7 @@ public class TicketMapper {
 
     }
 
-    public static TicketDTO getDTO(Ticket ticket){
+    public static TicketDTO toDTO(Ticket ticket){
         return TicketDTO.builder()
                 .id(ticket.getId())
                 .eventId(ticket.getEvent().getId())
@@ -24,7 +24,7 @@ public class TicketMapper {
     /**
      * User and Event needs to be set in service class
      */
-    public static Ticket getEntity(TicketDTO dto){
+    public static Ticket toEntity(TicketDTO dto){
         Ticket ticket = new Ticket();
         ticket.setId(dto.id());
         ticket.setStatus(dto.status());
