@@ -51,7 +51,6 @@ class EventControllerTest {
 
     @Test
     void shouldReturnEventWhenIdExists() throws Exception {
-        // Arrange
         EventDTO event = EventDTO.builder()
                 .id(1L)
                 .name("Hackathon 2025")
@@ -61,7 +60,6 @@ class EventControllerTest {
 
         when(eventService.getOne(1L)).thenReturn(event);
 
-        // Act & Assert
         mockMvc.perform(get("/api/events/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -72,10 +70,9 @@ class EventControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
-        // Arrange
-        when(eventService.getOne(99L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        when(eventService.getOne(99L))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        // Act & Assert
         mockMvc.perform(get("/api/events/99")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -147,7 +144,7 @@ class EventControllerTest {
             """;
 
         when(eventService.update(any(Long.class), any(EventDTO.class)))
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(put("/api/events/99")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -163,7 +160,7 @@ class EventControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistentEvent() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"))
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
                 .when(eventService).delete(99L);
 
         mockMvc.perform(delete("/api/events/99"))

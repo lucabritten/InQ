@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -148,5 +149,14 @@ public class UserControllerTest {
     void shouldDeleteUserWhenIdExists() throws Exception{
         mockMvc.perform(delete("/api/users/1"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingNonExistentUser() throws Exception{
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
+                .when(userService).delete(99L);
+
+        mockMvc.perform(delete("/api/users/99"))
+                .andExpect(status().isNotFound());
     }
 }
