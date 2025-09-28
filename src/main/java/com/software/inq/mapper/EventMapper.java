@@ -2,6 +2,9 @@ package com.software.inq.mapper;
 
 import com.software.inq.dto.EventDTO;
 import com.software.inq.model.Event;
+import com.software.inq.model.Ticket;
+
+import java.util.stream.Collectors;
 
 public class EventMapper {
 
@@ -13,6 +16,9 @@ public class EventMapper {
         return EventDTO.builder()
                 .id(event.getId())
                 .name(event.getName())
+                .ticketIds(event.getTickets().stream()
+                        .map(Ticket::getId)
+                        .collect(Collectors.toSet()))
                 .location(event.getLocation())
                 .date(event.getDate())
                 .build();

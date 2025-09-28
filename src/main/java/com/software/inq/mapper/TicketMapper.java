@@ -16,8 +16,6 @@ public class TicketMapper {
                 .userId(ticket.getUser().getId())
                 .status(ticket.getStatus())
                 .qrCode(ticket.getQrCode())
-                .createdAt(ticket.getCreatedAt())
-                .updatedAt(ticket.getUpdatedAt())
                 .build();
     }
 

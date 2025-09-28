@@ -11,7 +11,5 @@ public record TicketDTO (
         Long eventId,
         Long userId,
         TicketStatus status,
-        String qrCode,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt)
+        String qrCode)
 { }

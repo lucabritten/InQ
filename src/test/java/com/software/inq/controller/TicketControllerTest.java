@@ -87,7 +87,7 @@ public class TicketControllerTest {
         String ticketJson = """
                 {
                     "status": "VALID",
-                    "qeCode": "qwertz123"
+                    "qrCode": "qwertz123"
                 }
                 """;
 

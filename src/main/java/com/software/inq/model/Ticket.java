@@ -19,18 +19,18 @@ public class Ticket {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ticket_status")
     private TicketStatus status;
 
-    @Column(name = "qr_code", nullable = false)
+    @Column(name = "qr_code")
     private String qrCode;
 
     @Column(name = "created_at", nullable = false, updatable = false)

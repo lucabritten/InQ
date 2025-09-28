@@ -30,6 +30,7 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<TicketDTO> create(@RequestBody TicketDTO ticketDTO){
+        System.out.println("POST received: " + ticketDTO);
         TicketDTO savedTicket = ticketService.create(ticketDTO);
         return ResponseEntity
                 .created(URI.create("/api/tickets/" + savedTicket.id()))
