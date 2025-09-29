@@ -56,6 +56,7 @@ public class EventController {
         return ResponseEntity.noContent().build();
     }
 
+    //Redundant?
     @Operation(summary = "add Ticket to Event by id")
     @PutMapping("/{eventId}/tickets/{ticketId}")
     public ResponseEntity<EventDTO> addTicket(@PathVariable Long eventId, @PathVariable Long ticketId) {

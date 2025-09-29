@@ -4,6 +4,7 @@ import com.software.inq.dto.TicketDTO;
 import com.software.inq.mapper.TicketMapper;
 import com.software.inq.model.Event;
 import com.software.inq.model.Ticket;
+import com.software.inq.model.TicketStatus;
 import com.software.inq.model.User;
 import com.software.inq.util.PdfUtil;
 import com.software.inq.util.QRCodeUtil;
@@ -44,6 +45,7 @@ public class TicketService {
 
         ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
         ticket.setUser(getLinkedUser(ticketDTO.userId()));
+        ticket.setStatus(TicketStatus.VALID);
 
         Ticket saved = ticketRepository.save(ticket);
 

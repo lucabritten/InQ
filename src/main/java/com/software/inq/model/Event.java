@@ -25,7 +25,7 @@ public class Event {
     @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "date")
     private LocalDateTime date;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

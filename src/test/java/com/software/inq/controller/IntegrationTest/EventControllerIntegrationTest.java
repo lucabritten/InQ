@@ -1,7 +1,8 @@
-package com.software.inq.controller;
+package com.software.inq.controller.IntegrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.software.inq.dto.EventDTO;
+import com.software.inq.model.Event;
 import com.software.inq.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -84,5 +86,30 @@ class EventControllerIntegrationTest {
 
         mockMvc.perform(get("/api/events/" + createdEvent.id()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void shouldUpdateEvent() throws Exception{
+        Event event = new Event();
+        event.setName("Regatta");
+        event.setLocation("Koeln");
+        event.setDate(LocalDateTime.now());
+        event.setTickets(Set.of());
+
+        EventDTO updatedEvent = EventDTO.builder()
+                        .name("RacingLeague")
+                        .location("Miami")
+                        .build();
+
+        String json = objectMapper.writeValueAsString(updatedEvent);
+        eventRepository.save(event);
+
+        mockMvc.perform(put("/api/events/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value("RacingLeague"))
+                .andExpect(jsonPath("$.location").value("Miami"));
     }
 }
