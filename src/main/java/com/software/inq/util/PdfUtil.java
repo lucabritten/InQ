@@ -22,7 +22,7 @@ public class PdfUtil {
         PdfContentByte canvas = writer.getDirectContent();
 
         // Draw background color
-        Color bgColor = new Color(245, 245, 240);
+        Color bgColor = new Color(125, 125, 67);
         canvas.saveState();
         canvas.setColorFill(bgColor);
         canvas.rectangle(0, 0, pageSize.getWidth(), pageSize.getHeight());
@@ -39,73 +39,87 @@ public class PdfUtil {
         canvas.stroke();
         canvas.restoreState();
 
-        // Title: EVENT TICKET
-        Font titleFont = new Font(Font.HELVETICA, 28, Font.BOLD, new Color(40, 60, 130));
+        // Ticket-style layout on a single A6 landscape page
+        // Title: EVENT TICKET (bold, centered)
+        Font titleFont = new Font(Font.HELVETICA, 22, Font.BOLD, new Color(40, 60, 130));
         Paragraph title = new Paragraph("EVENT TICKET", titleFont);
         title.setAlignment(Element.ALIGN_CENTER);
-        title.setSpacingAfter(8f);
+        title.setSpacingAfter(6f);
         document.add(title);
 
-        // Colored line separator
-        PdfPTable lineTable = new PdfPTable(1);
-        lineTable.setWidthPercentage(80);
-        PdfPCell lineCell = new PdfPCell();
-        lineCell.setMinimumHeight(5f);
-        lineCell.setBackgroundColor(new Color(40, 60, 130));
-        lineCell.setBorder(Rectangle.NO_BORDER);
-        lineTable.addCell(lineCell);
-        lineTable.setSpacingAfter(18f);
-        lineTable.setHorizontalAlignment(Element.ALIGN_CENTER);
-        document.add(lineTable);
+        // Ticket layout: bordered rectangle with two columns
+        // Table with 2 columns: left = info, right = QR code
+        float[] colWidths = {2.1f, 1.3f};
+        PdfPTable ticketTable = new PdfPTable(2);
+        ticketTable.setWidthPercentage(96);
+        ticketTable.setWidths(colWidths);
+        ticketTable.setSpacingBefore(12f);
+        ticketTable.setSpacingAfter(8f);
+        ticketTable.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-        // Details section
-        Font labelFont = new Font(Font.HELVETICA, 14, Font.BOLD, new Color(50, 50, 50));
-        Font valueFont = new Font(Font.HELVETICA, 14, Font.NORMAL, new Color(30, 30, 30));
+        // Left: Event details (compact, clear)
+        PdfPTable infoTable = new PdfPTable(1);
+        infoTable.setWidthPercentage(100);
+        Font labelFont = new Font(Font.HELVETICA, 12, Font.BOLD, new Color(50, 50, 50));
+        Font valueFont = new Font(Font.HELVETICA, 12, Font.NORMAL, new Color(30, 30, 30));
+        float rowPad = 5f;
 
-        PdfPTable detailsTable = new PdfPTable(2);
-        detailsTable.setWidthPercentage(70);
-        detailsTable.setHorizontalAlignment(Element.ALIGN_CENTER);
-        detailsTable.setSpacingAfter(8f);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-        detailsTable.setWidths(new float[]{1.3f, 2.5f});
-
-        PdfPCell cell;
-        // Event
-        cell = new PdfPCell(new Phrase("Event:", labelFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(eventName, valueFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
-        // User
-        cell = new PdfPCell(new Phrase("User:", labelFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(userName, valueFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
+        PdfPCell infoCell;
+        // Event Name
+        infoCell = new PdfPCell();
+        infoCell.setBorder(Rectangle.NO_BORDER);
+        Phrase eventPhrase = new Phrase();
+        eventPhrase.add(new Chunk("Event: ", labelFont));
+        eventPhrase.add(new Chunk(eventName, valueFont));
+        infoCell.addElement(eventPhrase);
+        infoCell.setPaddingBottom(rowPad);
+        infoTable.addCell(infoCell);
+        // User Name
+        infoCell = new PdfPCell();
+        infoCell.setBorder(Rectangle.NO_BORDER);
+        Phrase userPhrase = new Phrase();
+        userPhrase.add(new Chunk("User: ", labelFont));
+        userPhrase.add(new Chunk(userName, valueFont));
+        infoCell.addElement(userPhrase);
+        infoCell.setPaddingBottom(rowPad);
+        infoTable.addCell(infoCell);
         // Ticket ID
-        cell = new PdfPCell(new Phrase("Ticket ID:", labelFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(String.valueOf(ticketId), valueFont));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingBottom(7f);
-        detailsTable.addCell(cell);
+        infoCell = new PdfPCell();
+        infoCell.setBorder(Rectangle.NO_BORDER);
+        Phrase idPhrase = new Phrase();
+        idPhrase.add(new Chunk("Ticket ID: ", labelFont));
+        idPhrase.add(new Chunk(String.valueOf(ticketId), valueFont));
+        infoCell.addElement(idPhrase);
+        infoCell.setPaddingBottom(rowPad);
+        infoTable.addCell(infoCell);
+        // Add left column to ticketTable
+        PdfPCell leftCol = new PdfPCell(infoTable);
+        leftCol.setBorder(Rectangle.NO_BORDER);
+        leftCol.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        leftCol.setPaddingLeft(8f);
+        leftCol.setPaddingTop(8f);
+        leftCol.setPaddingBottom(8f);
+        ticketTable.addCell(leftCol);
 
-        document.add(detailsTable);
-
-        // QR code image
+        // Right: QR code (centered)
+        PdfPCell qrCol = new PdfPCell();
+        qrCol.setBorder(Rectangle.NO_BORDER);
+        qrCol.setHorizontalAlignment(Element.ALIGN_CENTER);
+        qrCol.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        qrCol.setPaddingTop(8f);
+        qrCol.setPaddingBottom(8f);
+        qrCol.setPaddingRight(8f);
         byte[] qrBytes = Base64.getDecoder().decode(qrCodeBase64);
-        Image qrImage = Image.getInstance(qrBytes);
-        qrImage.scaleToFit(80, 80);
-        qrImage.setAlignment(Element.ALIGN_CENTER);
-        document.add(qrImage);
+        if (qrBytes.length > 0) {
+            Image qrImage = Image.getInstance(qrBytes);
+            // Fit QR code to column, max 70x70pt
+            qrImage.scaleToFit(70, 70);
+            qrImage.setAlignment(Image.MIDDLE);
+            qrCol.addElement(qrImage);
+        }
+        ticketTable.addCell(qrCol);
+
+        document.add(ticketTable);
 
         document.close();
         return baos.toByteArray();
