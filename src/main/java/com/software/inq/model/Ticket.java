@@ -30,7 +30,7 @@ public class Ticket {
     @Column(name = "ticket_status")
     private TicketStatus status;
 
-    @Column(name = "qr_code")
+    @Column(name = "qr_code", length = 5000)
     private String qrCode;
 
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -3,10 +3,12 @@ package com.software.inq.controller;
 import com.software.inq.dto.TicketDTO;
 import com.software.inq.service.TicketService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -47,5 +49,14 @@ public class TicketController {
     public ResponseEntity<Void> delete(@PathVariable Long id){
         ticketService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/qrcode")
+    public ResponseEntity<byte[]> getQrCode(@PathVariable Long id) {
+        TicketDTO ticket = ticketService.getOne(id);
+        byte[] qrImage = Base64.getDecoder().decode(ticket.qrCode());
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(qrImage);
     }
 }

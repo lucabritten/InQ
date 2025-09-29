@@ -76,4 +76,18 @@ public class EventService {
     public void delete(Long id){
         eventRepository.deleteById(id);
     }
+
+    public EventDTO addTicket(Long eventId, Long ticketId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found"));
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found"));
+
+        event.getTickets().add(ticket);
+
+        Event savedEvent = eventRepository.save(event);
+
+        return EventMapper.toDTO(savedEvent);
+    }
 }

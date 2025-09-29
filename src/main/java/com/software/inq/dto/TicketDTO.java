@@ -3,7 +3,6 @@ package com.software.inq.dto;
 import com.software.inq.model.TicketStatus;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
 
 @Builder
 public record TicketDTO (

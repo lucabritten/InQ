@@ -5,6 +5,7 @@ import com.software.inq.mapper.TicketMapper;
 import com.software.inq.model.Event;
 import com.software.inq.model.Ticket;
 import com.software.inq.model.User;
+import com.software.inq.qrCode.QRCodeUtil;
 import com.software.inq.repository.EventRepository;
 import com.software.inq.repository.TicketRepository;
 import com.software.inq.repository.UserRepository;
@@ -42,8 +43,16 @@ public class TicketService {
         ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
         ticket.setUser(getLinkedUser(ticketDTO.userId()));
 
-        Ticket savedTicket = ticketRepository.save(ticket);
-        return TicketMapper.toDTO(savedTicket);
+        Ticket saved = ticketRepository.save(ticket);
+
+        saved.setQrCode(QRCodeUtil.generateQRCodeBase64(
+                saved.getUser().getId(),
+                saved.getEvent().getId(),
+                saved.getId()
+        ));
+
+        Ticket finalSavedTicket = ticketRepository.save(saved);
+        return TicketMapper.toDTO(finalSavedTicket);
     }
 
     public TicketDTO update(Long id, TicketDTO ticketDTO){
