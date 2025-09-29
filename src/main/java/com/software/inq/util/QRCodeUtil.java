@@ -1,4 +1,4 @@
-package com.software.inq.qrCode;
+package com.software.inq.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BarcodeFormat;

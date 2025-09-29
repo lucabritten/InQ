@@ -1,8 +1,12 @@
 package com.software.inq.controller;
 
 import com.software.inq.dto.TicketDTO;
+import com.software.inq.service.EventService;
+import com.software.inq.service.UserService;
+import com.software.inq.util.PdfUtil;
 import com.software.inq.service.TicketService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,8 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService ticketService;
+    private final EventService eventService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<TicketDTO>> getAll(){
@@ -58,5 +64,14 @@ public class TicketController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(qrImage);
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> getTicketPdf(@PathVariable Long id) {
+        byte[] pdfBytes = ticketService.generateTicketPdf(id);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=ticket-" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
     }
 }

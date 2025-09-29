@@ -5,7 +5,8 @@ import com.software.inq.mapper.TicketMapper;
 import com.software.inq.model.Event;
 import com.software.inq.model.Ticket;
 import com.software.inq.model.User;
-import com.software.inq.qrCode.QRCodeUtil;
+import com.software.inq.util.PdfUtil;
+import com.software.inq.util.QRCodeUtil;
 import com.software.inq.repository.EventRepository;
 import com.software.inq.repository.TicketRepository;
 import com.software.inq.repository.UserRepository;
@@ -71,6 +72,24 @@ public class TicketService {
 
     public void delete(Long id){
         ticketRepository.deleteById(id);
+    }
+
+    public byte[] generateTicketPdf(Long ticketId) {
+        TicketDTO ticket = getOne(ticketId);
+        String eventName = eventRepository.findById(ticket.eventId())
+                .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found"))
+                .getName();
+        String userName = userRepository.findById(ticket.userId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User with id " + ticket.userId() + " not found"))
+                .getName();
+
+        try {
+            return PdfUtil.generateTicketPdf(eventName, userName, ticket.id(), ticket.qrCode());
+        } catch (Exception e) {
+            throw new RuntimeException("Fehler beim Generieren des PDFs", e);
+        }
     }
 
     private Event getLinkedEvent(Long eventId){
