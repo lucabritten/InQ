@@ -288,14 +288,46 @@ public class TicketControllerIntegrationTest {
         assertThat(ticketRepository.count()).isZero();
     }
 
-    //TODO: shouldReturn404WhenTicketNotFound
+    @Test
+    void shouldReturn404WhenTicketNotFound() throws Exception {
+
+        mockMvc.perform(get("/api/tickets/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Ticket with id 1 does not exist."));
+    }
     //TODO: shouldNotAllowDuplicateTicketForSameUserAndEvent
 
     //Business-logic tests
-    //TODO: shouldValidateTicket
-    //TODO: shouldRejectAlreadyUserTicket --> 400/409
+    @Test
+    void shouldValidateTicket() throws Exception{
 
+        User alice = new User();
+        alice.setName("Alice");
+        alice.setAge(23);
+        alice.setEmailAddress("alice@inq.com");
+        alice.setTickets(Set.of());
+        userRepository.save(alice);
 
+        Event event = new Event();
+        event.setName("Hackathon");
+        event.setLocation("Saarburg");
+        event.setDate(LocalDateTime.now());
+        event.setTickets(Set.of());
+        eventRepository.save(event);
 
+        Ticket ticket = new Ticket();
+        ticket.setEvent(event);
+        ticket.setUser(alice);
+        ticket.setStatus(TicketStatus.VALID);
+        ticket.setQrCode("qwertz");
+        ticketRepository.save(ticket);
 
+        assertThat(ticket.getStatus()).isEqualTo(TicketStatus.VALID);
+
+        mockMvc.perform(patch("/api/tickets/" + ticket.getId() + "/use"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("USED"));
+
+    }
+    //TODO: shouldRejectAlreadyUsedTicket --> 400/409
 }

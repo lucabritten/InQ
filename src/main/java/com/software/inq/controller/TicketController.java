@@ -78,4 +78,11 @@ public class TicketController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
+    @PatchMapping("/{id}/use")
+    @Operation(summary = "updates the ticket status")
+    public ResponseEntity<TicketDTO> useTicket(@PathVariable Long id){
+        TicketDTO updatedTicket = ticketService.useTicket(id);
+        return ResponseEntity.ok(updatedTicket);
+    }
 }

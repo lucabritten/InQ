@@ -43,8 +43,17 @@ public class TicketService {
     public TicketDTO create(TicketDTO ticketDTO){
         Ticket ticket = TicketMapper.toEntity(ticketDTO);
 
-        ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
-        ticket.setUser(getLinkedUser(ticketDTO.userId()));
+        Event linkedEvent = getLinkedEvent(ticketDTO.eventId());
+        if(linkedEvent.getDate().isBefore(LocalDateTime.now()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot create ticket for past Event.");
+        ticket.setEvent(linkedEvent);
+
+        User linkedUser = getLinkedUser(ticketDTO.userId());
+        boolean alreadyHasTicket = ticketRepository.existsByUserIdAndEventId(linkedUser.getId(), ticket.getEvent().getId());
+        if(alreadyHasTicket)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already has a ticket for this event.");
+        ticket.setUser(linkedUser);
+
         ticket.setStatus(TicketStatus.VALID);
 
         Ticket saved = ticketRepository.save(ticket);
@@ -98,6 +107,19 @@ public class TicketService {
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Generieren des PDFs", e);
         }
+    }
+
+    public TicketDTO useTicket(Long id){
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found."));
+
+        if(ticket.getStatus() != TicketStatus.VALID)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Ticket with status " + ticket.getStatus() + " cannot be used.");
+
+        ticket.setStatus(TicketStatus.USED);
+        System.out.println("TICKETSTATUS: " + ticket.getStatus());
+        Ticket savedTicket = ticketRepository.save(ticket);
+        return TicketMapper.toDTO(savedTicket);
     }
 
     private Event getLinkedEvent(Long eventId){
