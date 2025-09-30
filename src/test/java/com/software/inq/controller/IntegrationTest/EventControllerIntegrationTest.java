@@ -93,7 +93,7 @@ class EventControllerIntegrationTest {
         Event event = new Event();
         event.setName("Regatta");
         event.setLocation("Koeln");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
 
         EventDTO updatedEvent = EventDTO.builder()
@@ -104,7 +104,7 @@ class EventControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(updatedEvent);
         eventRepository.save(event);
 
-        mockMvc.perform(put("/api/events/1")
+        mockMvc.perform(put("/api/events/" + event.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())

@@ -1,7 +1,10 @@
 package com.software.inq.controller;
 
 import com.software.inq.dto.TicketDTO;
+import com.software.inq.model.Event;
+import com.software.inq.model.Ticket;
 import com.software.inq.model.TicketStatus;
+import com.software.inq.repository.TicketRepository;
 import com.software.inq.service.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,15 +89,15 @@ public class TicketControllerTest {
     void shouldCreateNewTicket() throws Exception{
         String ticketJson = """
                 {
-                    "status": "VALID",
-                    "qrCode": "qwertz123"
+                  "eventId": 1,
+                  "userId": 1     
                 }
                 """;
 
         TicketDTO savedTicket = TicketDTO.builder()
                 .id(1L)
-                .eventId(11L)
-                .userId(111L)
+                .eventId(1L)
+                .userId(1L)
                 .status(TicketStatus.VALID)
                 .qrCode("qwertz123")
                 .build();

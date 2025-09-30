@@ -36,7 +36,7 @@ class EventControllerTest {
                 .id(1L)
                 .name("Hackathon 2025")
                 .location("Berlin")
-                .date(LocalDateTime.now())
+                .date(LocalDateTime.now().plusDays(1))
                 .build();
 
         when(eventService.getAll()).thenReturn(List.of(event));
@@ -55,7 +55,7 @@ class EventControllerTest {
                 .id(1L)
                 .name("Hackathon 2025")
                 .location("Berlin")
-                .date(LocalDateTime.now())
+                .date(LocalDateTime.now().plusDays(1))
                 .build();
 
         when(eventService.getOne(1L)).thenReturn(event);

@@ -66,7 +66,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -106,7 +106,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -145,7 +145,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -195,7 +195,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -213,8 +213,6 @@ public class TicketControllerIntegrationTest {
         assertThat(ticketRepository.findById(ticket.getId())).isEmpty();
     }
 
-    //TODO: shouldUpdateTicketStatus
-
     //Error-handling tests
     @Test
     void shouldReturn404WhenUserNotFound()throws Exception {
@@ -222,7 +220,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -295,7 +293,45 @@ public class TicketControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Ticket with id 1 does not exist."));
     }
-    //TODO: shouldNotAllowDuplicateTicketForSameUserAndEvent
+
+    @Test
+    void shouldNotAllowDuplicateTicketForSameUserAndEvent() throws Exception{
+
+        User user = new User();
+        user.setName("Alice");
+        user.setAge(23);
+        user.setEmailAddress("alice@inq.com");
+        user.setTickets(Set.of());
+        userRepository.save(user);
+
+        Event event = new Event();
+        event.setName("Hackathon");
+        event.setLocation("Saarburg");
+        event.setDate(LocalDateTime.now().plusDays(1));
+        event.setTickets(Set.of());
+        eventRepository.save(event);
+
+        Ticket ticket = new Ticket();
+        ticket.setEvent(event);
+        ticket.setUser(user);
+        ticket.setStatus(TicketStatus.USED);
+        ticket.setQrCode("qwertz");
+        ticketRepository.save(ticket);
+
+        String json = """
+                {
+                    "userId": %d,
+                    "eventId": %d
+                }
+                """.formatted(user.getId(),event.getId());
+
+        mockMvc.perform(post("/api/tickets")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("User already has a ticket for this event."));
+
+    }
 
     //Business-logic tests
     @Test
@@ -311,7 +347,7 @@ public class TicketControllerIntegrationTest {
         Event event = new Event();
         event.setName("Hackathon");
         event.setLocation("Saarburg");
-        event.setDate(LocalDateTime.now());
+        event.setDate(LocalDateTime.now().plusDays(1));
         event.setTickets(Set.of());
         eventRepository.save(event);
 
@@ -329,5 +365,35 @@ public class TicketControllerIntegrationTest {
                 .andExpect(jsonPath("$.status").value("USED"));
 
     }
-    //TODO: shouldRejectAlreadyUsedTicket --> 400/409
+
+    @Test
+    void shouldRejectAlreadyUsedTicket() throws Exception{
+        User alice = new User();
+        alice.setName("Alice");
+        alice.setAge(23);
+        alice.setEmailAddress("alice@inq.com");
+        alice.setTickets(Set.of());
+        userRepository.save(alice);
+
+        Event event = new Event();
+        event.setName("Hackathon");
+        event.setLocation("Saarburg");
+        event.setDate(LocalDateTime.now().plusDays(1));
+        event.setTickets(Set.of());
+        eventRepository.save(event);
+
+        Ticket ticket = new Ticket();
+        ticket.setEvent(event);
+        ticket.setUser(alice);
+        ticket.setStatus(TicketStatus.USED);
+        ticket.setQrCode("qwertz");
+        ticketRepository.save(ticket);
+
+        mockMvc.perform(patch("/api/tickets/" + ticket.getId() + "/use"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Ticket with status USED cannot be used."));
+
+        Ticket usedTicket = ticketRepository.findById(ticket.getId()).orElseThrow();
+        assertThat(usedTicket.getStatus()).isEqualTo(TicketStatus.USED);
+    }
 }
