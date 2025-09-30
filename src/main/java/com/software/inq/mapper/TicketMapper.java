@@ -10,13 +10,13 @@ public class TicketMapper {
     }
 
     public static TicketDTO toDTO(Ticket ticket){
-        return TicketDTO.builder()
-                .id(ticket.getId())
-                .eventId(ticket.getEvent().getId())
-                .userId(ticket.getUser().getId())
-                .status(ticket.getStatus())
-                .qrCode(ticket.getQrCode())
-                .build();
+            return TicketDTO.builder()
+                    .id(ticket.getId())
+                    .eventId(ticket.getEvent().getId())
+                    .userId(ticket.getUser().getId())
+                    .status(ticket.getStatus())
+                    .qrCode(ticket.getQrCode())
+                    .build();
     }
 
     /**

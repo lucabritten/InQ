@@ -31,7 +31,7 @@ public class EventService {
     public EventDTO getOne(Long id){
         return eventRepository.findById(id)
                 .map(EventMapper::toDTO)
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + id + " does not exist"));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + id + " does not exist."));
     }
 
     public EventDTO create(EventDTO eventDTO){
@@ -42,7 +42,7 @@ public class EventService {
         Set<Ticket> tickets = ticketIds.stream()
                 .map(id -> ticketRepository.findById(id)
                         .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found")))
+                                HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found.")))
                 .collect(Collectors.toSet());
 
         event.setTickets(tickets);
@@ -54,7 +54,7 @@ public class EventService {
     public EventDTO update(Long id, EventDTO eventDTO){
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Event with id " + id + " not found"));
+                        HttpStatus.NOT_FOUND, "Event with id " + id + " not found."));
 
         event.setName(eventDTO.name());
         event.setLocation(eventDTO.location());
@@ -64,7 +64,7 @@ public class EventService {
             Set<Ticket> tickets = eventDTO.ticketIds().stream()
                     .map(ticketId -> ticketRepository.findById(ticketId)
                             .orElseThrow(() -> new ResponseStatusException(
-                                    HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found")))
+                                    HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found.")))
                     .collect(Collectors.toSet());
             event.setTickets(tickets);
         }
@@ -79,10 +79,10 @@ public class EventService {
 
     public EventDTO addTicket(Long eventId, Long ticketId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event with id " + eventId + " not found."));
 
         Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found."));
 
         event.getTickets().add(ticket);
 

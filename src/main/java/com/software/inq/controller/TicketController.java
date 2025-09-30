@@ -1,14 +1,11 @@
 package com.software.inq.controller;
 
 import com.software.inq.dto.TicketDTO;
-import com.software.inq.service.EventService;
-import com.software.inq.service.UserService;
-import com.software.inq.util.PdfUtil;
 import com.software.inq.service.TicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,8 +38,7 @@ public class TicketController {
 
     @PostMapping
     @Operation(summary = "creates a new Ticket")
-    public ResponseEntity<TicketDTO> create(@RequestBody TicketDTO ticketDTO){
-        System.out.println("POST received: " + ticketDTO);
+    public ResponseEntity<TicketDTO> create(@Valid @RequestBody TicketDTO ticketDTO){
         TicketDTO savedTicket = ticketService.create(ticketDTO);
         return ResponseEntity
                 .created(URI.create("/api/tickets/" + savedTicket.id()))

@@ -31,7 +31,7 @@ public class UserService {
     public UserDTO getOne(Long id){
         return userRepository.findById(id)
                 .map(UserMapper::toDTO)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + id + " does not exist."));
     }
 
     public UserDTO create(UserDTO userDTO){
@@ -42,7 +42,7 @@ public class UserService {
         Set<Ticket> tickets = ticketIds.stream()
                 .map(id -> ticketRepository.findById(id)
                         .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found")))
+                                HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found.")))
                 .collect(Collectors.toSet());
         user.setTickets(tickets);
         User savedUser = userRepository.save(user);
@@ -52,7 +52,7 @@ public class UserService {
     public UserDTO update(Long id, UserDTO userDTO){
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User does with id " + id + "does not exist"));
+                        HttpStatus.NOT_FOUND, "User does with id " + id + "does not exist."));
 
         user.setName(userDTO.name());
         user.setAge(userDTO.age());
@@ -62,7 +62,7 @@ public class UserService {
             Set<Ticket> tickets = userDTO.ticketIds().stream()
                     .map(ticketId -> ticketRepository.findById(ticketId)
                             .orElseThrow(() -> new ResponseStatusException(
-                                    HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found")))
+                                    HttpStatus.NOT_FOUND, "Ticket with id " + ticketId + " not found.")))
                     .collect(Collectors.toSet());
             user.setTickets(tickets);
         }

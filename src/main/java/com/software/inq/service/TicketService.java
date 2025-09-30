@@ -62,7 +62,7 @@ public class TicketService {
     public TicketDTO update(Long id, TicketDTO ticketDTO){
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found"));
+                        HttpStatus.NOT_FOUND, "Ticket with id " + id + " not found."));
 
         ticket.setEvent(getLinkedEvent(ticketDTO.eventId()));
         ticket.setUser(getLinkedUser(ticketDTO.userId()));
@@ -81,16 +81,16 @@ public class TicketService {
         TicketDTO ticket = getOne(ticketId);
         String eventName = eventRepository.findById(ticket.eventId())
                 .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found"))
+                HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found."))
                 .getName();
         String userName = userRepository.findById(ticket.userId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User with id " + ticket.userId() + " not found"))
+                        HttpStatus.NOT_FOUND, "User with id " + ticket.userId() + " not found."))
                 .getName();
 
         LocalDateTime eventDate = eventRepository.findById(ticket.eventId())
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found"))
+                        HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found."))
                 .getDate();
 
         try {
@@ -109,7 +109,7 @@ public class TicketService {
     private User getLinkedUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User with id " + userId + " not found"));
+                        HttpStatus.NOT_FOUND, "User with id " + userId + " not found."));
 
     }
 }
