@@ -36,7 +36,9 @@ Here’s an example of a generated ticket with QR code:
 
 ---
 ## 🛠️ Tech Stack
-- **Backend Framework:** Spring Boot (3.x)  
+
+### Backend
+- **Framework:** Spring Boot (3.x)  
 - **Database:** H2 (in-memory, for development)  
 - **ORM:** Hibernate / JPA  
 - **Build Tool:** Maven  
@@ -44,18 +46,36 @@ Here’s an example of a generated ticket with QR code:
 - **PDF Export:** openPDF  
 - **Testing:** JUnit 5, Spring Boot Test, Mockito  
 
+### Frontend
+- **Framework:** React 19 with TypeScript
+- **Build Tool:** Vite
+- **Styling:** TailwindCSS
+- **Routing:** React Router
+- **HTTP Client:** Axios
+- **QR Code:** qrcode.react, @zxing/library
+- **Testing:** Vitest, React Testing Library
+
 ---
 
 ## 📂 Project Structure
 ```
-src/main/java/com/software/inq
-├── controller     # REST controllers (Event, User, Ticket)
-├── dto            # Data Transfer Objects for APIs
-├── exception      # Custom exceptions
-├── mapper         # Mapper classes (Entity ↔ DTO)
-├── model          # JPA entities (Event, Ticket, User, TicketStatus enum)
-├── repository     # Spring Data JPA repositories
-└── service        # Business logic (event, user, ticket services)
+InQ/
+├── src/main/java/com/software/inq/  # Backend (Spring Boot)
+│   ├── controller     # REST controllers (Event, User, Ticket)
+│   ├── dto            # Data Transfer Objects for APIs
+│   ├── exception      # Custom exceptions & global handler
+│   ├── mapper         # Mapper classes (Entity ↔ DTO)
+│   ├── model          # JPA entities (Event, Ticket, User, TicketStatus enum)
+│   ├── repository     # Spring Data JPA repositories
+│   └── service        # Business logic (event, user, ticket services)
+├── frontend/          # Frontend (React + TypeScript)
+│   ├── src/
+│   │   ├── components/   # Reusable UI components
+│   │   ├── pages/        # Page components for each route
+│   │   ├── services/     # API service layer
+│   │   └── types/        # TypeScript type definitions
+│   └── package.json
+└── pom.xml
 ```
 
 ---
@@ -65,15 +85,28 @@ src/main/java/com/software/inq
 ### Prerequisites
 - Java 21+  
 - Maven 3+  
-- IDE like IntelliJ IDEA  
+- Node.js 20+ and npm (for frontend)
+- IDE like IntelliJ IDEA or VS Code
 
-### Run the Application
+### Run the Backend
 ```bash
 ./mvnw spring-boot:run
 ```
 
 The backend will start at:  
 👉 `http://localhost:8080`
+
+### Run the Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will start at:  
+👉 `http://localhost:5173`
+
+For more details on the frontend, see [frontend/README.md](frontend/README.md)
 
 ---
 

@@ -34,3 +34,8 @@ build/
 
 ### other Files ###
 ticket-preview.pdf.pdf
+
+### Frontend ###
+frontend/node_modules
+frontend/dist
+frontend/.env
