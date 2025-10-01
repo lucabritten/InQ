@@ -26,6 +26,15 @@ The project simulates a simple **event ticketing system**, where events, users, 
 
 ---
 
+## 🎫 Example Ticket
+
+Here’s an example of a generated ticket with QR code:
+
+![Example Ticket](docs/example-ticket.png)
+
+[📄 Download Example Ticket (PDF)](docs/example-ticket.pdf)
+
+---
 ## 🛠️ Tech Stack
 - **Backend Framework:** Spring Boot (3.x)  
 - **Database:** H2 (in-memory, for development)  
