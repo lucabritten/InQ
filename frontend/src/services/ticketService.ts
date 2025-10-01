@@ -26,16 +26,10 @@ export const ticketService = {
     await api.delete(`/tickets/${id}`);
   },
 
-  useTicket: async (id: number): Promise<Ticket> => {
-    const response = await api.patch<Ticket>(`/tickets/${id}/use`);
+  // Use a ticket by validating it with ticketId only
+  useTicket: async (ticketId: number): Promise<Ticket> => {
+    const response = await api.patch<Ticket>(`/tickets/${ticketId}/use`);
     return response.data;
-  },
-
-  getQRCode: async (id: number): Promise<string> => {
-    const response = await api.get(`/tickets/${id}/qrcode`, {
-      responseType: 'blob',
-    });
-    return URL.createObjectURL(response.data);
   },
 
   getPDF: async (id: number): Promise<string> => {
