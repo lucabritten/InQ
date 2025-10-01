@@ -95,7 +95,7 @@ The backend will start at:
 - `GET /api/tickets` → list all tickets  
 - `GET /api/tickets/{id}` → get single ticket  
 - `POST /api/tickets` → create new ticket (generates QR + PDF)  
-- `POST /api/tickets/{id}/validate` → validate (mark as `USED`)  
+- `POST /api/tickets/{id}/use` → validate (mark as `USED`)  
 
 ---
 
