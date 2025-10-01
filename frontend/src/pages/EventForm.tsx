@@ -39,10 +39,16 @@ export default function EventForm() {
     try {
       setLoading(true);
       setError('');
+      // Create DTO with only required fields
+      const eventDTO = {
+        name: formData.name,
+        location: formData.location,
+        date: formData.date,
+      };
       if (id) {
-        await eventService.update(Number(id), formData);
+        await eventService.update(Number(id), eventDTO);
       } else {
-        await eventService.create(formData);
+        await eventService.create(eventDTO);
       }
       navigate('/events');
     } catch (err: any) {

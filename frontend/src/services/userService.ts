@@ -1,5 +1,5 @@
 import api from './api';
-import type { User } from '../types';
+import type { User, UserDTO } from '../types';
 
 export const userService = {
   getAll: async (): Promise<User[]> => {
@@ -12,13 +12,13 @@ export const userService = {
     return response.data;
   },
 
-  create: async (user: User): Promise<User> => {
-    const response = await api.post<User>('/users', user);
+  create: async (userDTO: UserDTO): Promise<User> => {
+    const response = await api.post<User>('/users', userDTO);
     return response.data;
   },
 
-  update: async (id: number, user: User): Promise<User> => {
-    const response = await api.put<User>(`/users/${id}`, user);
+  update: async (id: number, userDTO: UserDTO): Promise<User> => {
+    const response = await api.put<User>(`/users/${id}`, userDTO);
     return response.data;
   },
 

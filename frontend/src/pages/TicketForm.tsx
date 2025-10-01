@@ -45,7 +45,12 @@ export default function TicketForm() {
     try {
       setLoading(true);
       setError('');
-      await ticketService.create(formData);
+      // Create DTO with only required fields
+      const ticketDTO = {
+        eventId: formData.eventId,
+        userId: formData.userId,
+      };
+      await ticketService.create(ticketDTO);
       navigate('/tickets');
     } catch (err: any) {
       const errorData = err.response?.data;

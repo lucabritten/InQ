@@ -39,10 +39,16 @@ export default function UserForm() {
     try {
       setLoading(true);
       setError('');
+      // Create DTO with only required fields
+      const userDTO = {
+        name: formData.name,
+        age: formData.age,
+        emailAddress: formData.emailAddress,
+      };
       if (id) {
-        await userService.update(Number(id), formData);
+        await userService.update(Number(id), userDTO);
       } else {
-        await userService.create(formData);
+        await userService.create(userDTO);
       }
       navigate('/users');
     } catch (err: any) {

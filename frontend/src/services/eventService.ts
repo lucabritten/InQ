@@ -1,5 +1,5 @@
 import api from './api';
-import type { Event } from '../types';
+import type { Event, EventDTO } from '../types';
 
 export const eventService = {
   getAll: async (): Promise<Event[]> => {
@@ -12,13 +12,13 @@ export const eventService = {
     return response.data;
   },
 
-  create: async (event: Event): Promise<Event> => {
-    const response = await api.post<Event>('/events', event);
+  create: async (eventDTO: EventDTO): Promise<Event> => {
+    const response = await api.post<Event>('/events', eventDTO);
     return response.data;
   },
 
-  update: async (id: number, event: Event): Promise<Event> => {
-    const response = await api.put<Event>(`/events/${id}`, event);
+  update: async (id: number, eventDTO: EventDTO): Promise<Event> => {
+    const response = await api.put<Event>(`/events/${id}`, eventDTO);
     return response.data;
   },
 
