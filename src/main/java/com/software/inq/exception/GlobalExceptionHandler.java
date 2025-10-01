@@ -1,5 +1,6 @@
 package com.software.inq.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
+@Hidden
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
