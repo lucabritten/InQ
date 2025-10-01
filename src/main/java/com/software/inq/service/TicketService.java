@@ -97,13 +97,18 @@ public class TicketService {
                         HttpStatus.NOT_FOUND, "User with id " + ticket.userId() + " not found."))
                 .getName();
 
+        String userEmail = userRepository.findById(ticket.userId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User with id " + ticket.userId() + " not found."))
+                .getEmailAddress();
+
         LocalDateTime eventDate = eventRepository.findById(ticket.eventId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Event with id " + ticket.eventId() + " not found."))
                 .getDate();
 
         try {
-            return PdfUtil.generateTicketPdf(eventName, eventDate,userName, ticket.id(), ticket.qrCode());
+            return PdfUtil.generateTicketPdf(eventName, eventDate,userName, userEmail,ticket.id(), ticket.qrCode());
         } catch (Exception e) {
             throw new RuntimeException("Fehler beim Generieren des PDFs", e);
         }

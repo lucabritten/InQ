@@ -28,6 +28,7 @@ public class PdfUtil {
             String eventName,
             LocalDateTime eventDate,
             String userName,
+            String userEmail,
             Long ticketId,
             String qrCodeBase64
     ) throws Exception {
@@ -48,7 +49,7 @@ public class PdfUtil {
         drawSectionBorders(canvas, pageHeight, pageWidth, mainWidth);
 
         drawStubSection(canvas, pageHeight, ticketId);
-        drawMainSection(canvas, pageHeight, mainWidth, eventName, eventDate, userName);
+        drawMainSection(canvas, pageHeight, mainWidth, eventName, eventDate, userName, userEmail);
         drawQrSection(canvas, pageHeight, mainWidth, qrCodeBase64);
 
         document.close();
@@ -116,12 +117,15 @@ public class PdfUtil {
             float mainWidth,
             String eventName,
             LocalDateTime eventDate,
-            String userName
+            String userName,
+            String userEmail
     ) {
         Font eventDateFont = new Font(Font.HELVETICA, 10, Font.BOLD, Color.WHITE);
         Font eventNameFont = new Font(Font.HELVETICA, 14, Font.BOLD, Color.WHITE);
         Font ticketFont = new Font(Font.HELVETICA, 36, Font.BOLD, Color.WHITE);
         Font userNameFont = new Font(Font.HELVETICA, 16, Font.NORMAL, Color.WHITE);
+        Font userEmailFont = new Font(Font.HELVETICA, 10, Font.NORMAL, Color.WHITE);
+
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
         String formattedDate = eventDate.format(dateFormatter);
@@ -163,6 +167,15 @@ public class PdfUtil {
                 new Phrase(userName, userNameFont),
                 STUB_WIDTH + mainWidth / 2,
                 pageHeight / 2 - 30,
+                0
+        );
+
+        ColumnText.showTextAligned(
+                canvas,
+                Element.ALIGN_CENTER,
+                new Phrase(userEmail, userEmailFont),
+                STUB_WIDTH + mainWidth / 2,
+                pageHeight / 2 - 40,
                 0
         );
     }
