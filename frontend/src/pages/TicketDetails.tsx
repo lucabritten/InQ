@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { QRCodeSVG } from 'qrcode.react';
 import { ticketService } from '../services/ticketService';
 import type { Ticket } from '../types';
 import Loading from '../components/Loading';
@@ -112,11 +111,10 @@ export default function TicketDetails() {
             <h3 className="text-lg font-semibold mb-4">QR Code</h3>
             <div className="flex justify-center">
               <div className="bg-white p-4 rounded-lg border-2 border-gray-200">
-                <QRCodeSVG
-                  value={ticket.qrCode}
-                  size={256}
-                  level="H"
-                  includeMargin={true}
+                <img
+                  src={`data:image/png;base64,${ticket.qrCode}`}
+                  alt="QR Code"
+                  style={{ width: "256px", height: "256px" }}
                 />
               </div>
             </div>

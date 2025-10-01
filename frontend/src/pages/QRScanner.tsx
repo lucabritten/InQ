@@ -66,25 +66,31 @@ export default function QRScanner() {
   const handleScan = async (qrCode: string) => {
     try {
       setError('');
-      
-      // Parse the QR code to extract ticket ID
-      // The QR code format from backend is: userId,eventId,ticketId
-      const parts = qrCode.split(',');
-      if (parts.length !== 3) {
-        setError('Invalid QR code format');
+
+      // The frontend QR code is expected to be a JSON string
+      // e.g., {"eventId":1,"userId":2,"ticketId":3}
+      let parsed: { eventId?: number; userId?: number; ticketId?: number };
+      try {
+        parsed = JSON.parse(qrCode);
+      } catch {
+        setError('Invalid JSON format in QR code');
         return;
       }
 
-      const ticketId = Number(parts[2]);
-      if (isNaN(ticketId)) {
-        setError('Invalid ticket ID in QR code');
+      const { eventId, userId, ticketId } = parsed;
+      if (
+        typeof eventId !== 'number' || isNaN(eventId) ||
+        typeof userId !== 'number' || isNaN(userId) ||
+        typeof ticketId !== 'number' || isNaN(ticketId)
+      ) {
+        setError('QR code must contain valid eventId, userId, and ticketId as numbers');
         return;
       }
 
-      // Validate the ticket by marking it as used
+      // Validate the ticket by sending only the ticketId to the backend
       const updatedTicket = await ticketService.useTicket(ticketId);
       setSuccess(
-        `Ticket #${ticketId} successfully validated! Status: ${updatedTicket.status}`
+        `Ticket #${ticketId} (User: ${userId}, Event: ${eventId}) successfully validated! Status: ${updatedTicket.status}`
       );
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to validate ticket');
