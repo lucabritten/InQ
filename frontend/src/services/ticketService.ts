@@ -1,5 +1,5 @@
 import api from './api';
-import type { Ticket } from '../types';
+import type { Ticket, TicketDTO } from '../types';
 
 export const ticketService = {
   getAll: async (): Promise<Ticket[]> => {
@@ -12,13 +12,13 @@ export const ticketService = {
     return response.data;
   },
 
-  create: async (ticket: Ticket): Promise<Ticket> => {
-    const response = await api.post<Ticket>('/tickets', ticket);
+  create: async (ticketDTO: TicketDTO): Promise<Ticket> => {
+    const response = await api.post<Ticket>('/tickets', ticketDTO);
     return response.data;
   },
 
-  update: async (id: number, ticket: Ticket): Promise<Ticket> => {
-    const response = await api.put<Ticket>(`/tickets/${id}`, ticket);
+  update: async (id: number, ticketDTO: TicketDTO): Promise<Ticket> => {
+    const response = await api.put<Ticket>(`/tickets/${id}`, ticketDTO);
     return response.data;
   },
 

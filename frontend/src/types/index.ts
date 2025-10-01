@@ -24,6 +24,25 @@ export interface Ticket {
   qrCode?: string;
 }
 
+// DTO types for create/update operations (without id, createdAt, updatedAt, etc.)
+export interface EventDTO {
+  name: string;
+  location: string;
+  date: string;
+}
+
+export interface UserDTO {
+  name: string;
+  age: number;
+  emailAddress: string;
+  ticketIds?: number[];
+}
+
+export interface TicketDTO {
+  eventId: number;
+  userId: number;
+}
+
 export interface ApiError {
   status?: string;
   message: string;
