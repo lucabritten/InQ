@@ -1,10 +1,8 @@
-package com.software.inq.controller;
+package com.software.inq.controller.MockitoTest;
 
+import com.software.inq.controller.TicketController;
 import com.software.inq.dto.TicketDTO;
-import com.software.inq.model.Event;
-import com.software.inq.model.Ticket;
 import com.software.inq.model.TicketStatus;
-import com.software.inq.repository.TicketRepository;
 import com.software.inq.service.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

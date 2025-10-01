@@ -1,5 +1,6 @@
-package com.software.inq.controller;
+package com.software.inq.controller.MockitoTest;
 
+import com.software.inq.controller.UserController;
 import com.software.inq.dto.UserDTO;
 import com.software.inq.service.UserService;
 import org.junit.jupiter.api.Test;
